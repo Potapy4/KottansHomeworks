@@ -44,7 +44,7 @@ namespace Citizens
                 return false;
             }
             return true;
-        }
+        }        
 
         #region Properties
         public DateTime BirthDate

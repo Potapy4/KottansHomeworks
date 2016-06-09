@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Citizen.cs" />
+    <Compile Include="CitizenRegistry.cs" />
     <Compile Include="Gender.cs" />
     <Compile Include="ICitizen.cs" />
     <Compile Include="ICitizenRegistry.cs" />

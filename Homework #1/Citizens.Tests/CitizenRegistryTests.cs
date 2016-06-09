@@ -51,15 +51,15 @@
         //    StringAssert.StartsWith(citizen.VatId, "33473");
         //}
 
-        //[TestMethod]
-        //public void Register_ForManWithEmptyVatId_AssignsVatIdWithOddCounter()
-        //{
-        //    var citizen = CitizenBuilder.NewMan().WithDate(TestBirthDate).Build();
-        //    registry.Register(citizen);
+        [TestMethod]
+        public void Register_ForManWithEmptyVatId_AssignsVatIdWithOddCounter()
+        {
+            var citizen = CitizenBuilder.NewMan().WithDate(TestBirthDate).Build();
+            registry.Register(citizen);
 
-        //    int counter = Int32.Parse(citizen.VatId.Substring(5, 4));
-        //    Assert.AreEqual(1, counter & 1);
-        //}
+            int counter = Int32.Parse(citizen.VatId.Substring(5, 4));
+            Assert.AreEqual(1, counter & 1);
+        }
 
         //[TestMethod]
         //public void Register_ForWomanWithEmptyVatId_AssignsVatIdWithEvenCounter()
@@ -166,7 +166,8 @@
         private ICitizenRegistry CreateCitizenRegistry()
         {
             // TODO: return new instance of class that implements ICitizenRegistry
-            return default(ICitizenRegistry);
+            //return default(ICitizenRegistry);
+            return new CitizenRegistry();
         }
     }
 }
