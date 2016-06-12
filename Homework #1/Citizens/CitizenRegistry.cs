@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Humanizer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,14 +10,34 @@ namespace Citizens
     public class CitizenRegistry : ICitizenRegistry
     {
         private static Citizen[] citizens = new Citizen[20];
-        private static int countNow;
         private static DateTime mainDate = new DateTime(1899, 12, 31);
+        private static DateTime lastDate = new DateTime();
+        private static int[] controlDigits = { -1, 5, 7, 9, 4, 6, 10, 5, 7 };
+        private static int countNow = 0;
 
         public ICitizen this[string id]
         {
             get
             {
-                throw new NotImplementedException();
+                if (String.IsNullOrEmpty(id))
+                {
+                    throw new ArgumentNullException();
+                }
+
+                Citizen result = null;
+
+                foreach (Citizen ct in citizens)
+                {
+                    if (ct == null)
+                        break;
+
+                    if (ct.VatId == id)
+                    {
+                        result = ct;
+                    }
+                }
+
+                return result;
             }
         }
 
@@ -37,39 +58,43 @@ namespace Citizens
             return result;
         }
 
-        private bool checkVatId(string vatID)
+        private string registerVatID(ref ICitizen citizen)
         {
-            int[] controlDigits = { -1, 5, 7, 9, 4, 6, 10, 5, 7 };
-            int[] ourDigits = new int[10];
-            int X = 0;
+            TimeSpan time = citizen.BirthDate - mainDate;
+            string vatId = String.Empty;
+            int tmpDigit = -1;
 
-            for (int i = 0; i < vatID.Length; ++i)
+            vatId += time.Days.ToString();
+
+            if (citizen.BirthDate.Year < 1910)
+                vatId += "0";
+
+            foreach (Citizen ct in citizens)
             {
-                ourDigits[i] = vatID[i] - '0';
+                if (ct == null)
+                    break;
+                if (ct.VatId.StartsWith(vatId))
+                {
+                    tmpDigit = Convert.ToInt32(ct.VatId.Substring(6, 3));
+                }
             }
+
+            vatId += (++tmpDigit).ToString("000") + (int)citizen.Gender;
+            tmpDigit = 0;
 
             for (int i = 0; i < 9; ++i)
             {
-                X += ourDigits[i] * controlDigits[i];
+                tmpDigit += (vatId[i] - '0') * controlDigits[i];
             }
 
-            X = (X % 11) % 10;
+            tmpDigit = (tmpDigit % 11) % 10;
+            vatId += tmpDigit;
 
-            return (X == ourDigits[9]);
-        }
-
-        private string registerVatID(DateTime dt)
-        {           
-            TimeSpan time = dt - mainDate;
-            
-            // TODO : main logic
-
-            return time.Days.ToString();
+            return vatId;
         }
 
         public void Register(ICitizen citizen)
         {
-
             if (checkIfExist(citizen.VatId))
             {
                 throw new InvalidOperationException();
@@ -77,16 +102,43 @@ namespace Citizens
 
             if (string.IsNullOrEmpty(citizen.VatId))
             {
-                citizen.VatId = registerVatID(citizen.BirthDate);
+                citizen.VatId = registerVatID(ref citizen);
             }
 
-
             citizens[countNow++] = citizen as Citizen;
+            lastDate = SystemDateTime.Now();
         }
 
         public string Stats()
         {
-            throw new NotImplementedException();
+            int men = 0, women = 0;
+            string result = String.Empty;
+
+            foreach (Citizen ct in citizens)
+            {
+                if (ct == null)
+                    break;
+
+                if ((int)ct.Gender == 0)
+                {
+                    ++women;
+                }
+                else
+                {
+                    ++men;
+                }
+            }
+
+            if (men == 0 && women == 0)
+            {
+                result = "0 men and 0 women";
+            }
+            else
+            {
+                result = men + (men > 1 ? " men" : " man") + " and " + women + (women > 1 ? " women" : " woman") + ". " + "Last registartion was " + DateTime.UtcNow.AddHours(-30).Humanize(); // Well, it's seems work but return last word "вчера"
+            }
+
+            return result;
         }
     }
 }

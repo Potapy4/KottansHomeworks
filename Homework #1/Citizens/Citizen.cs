@@ -28,6 +28,14 @@ namespace Citizens
             this.gender = gender;
         }
 
+        public Citizen()
+        {
+            dateOfBirth = default(DateTime);
+            firstName = default(string);
+            lastName = default(string);
+            gender = default(Gender);
+        }
+
         private bool isValidGender(ref Gender gender)
         {
             if (!Enum.IsDefined(typeof(Gender), gender))

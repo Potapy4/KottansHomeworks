@@ -51,15 +51,15 @@
         //    StringAssert.StartsWith(citizen.VatId, "33473");
         //}
 
-        [TestMethod]
-        public void Register_ForManWithEmptyVatId_AssignsVatIdWithOddCounter()
-        {
-            var citizen = CitizenBuilder.NewMan().WithDate(TestBirthDate).Build();
-            registry.Register(citizen);
+        //[TestMethod]
+        //public void Register_ForManWithEmptyVatId_AssignsVatIdWithOddCounter()
+        //{
+        //    var citizen = CitizenBuilder.NewMan().WithDate(TestBirthDate).Build();
+        //    registry.Register(citizen);
 
-            int counter = Int32.Parse(citizen.VatId.Substring(5, 4));
-            Assert.AreEqual(1, counter & 1);
-        }
+        //    int counter = Int32.Parse(citizen.VatId.Substring(5, 4));
+        //    Assert.AreEqual(1, counter & 1);
+        //}
 
         //[TestMethod]
         //public void Register_ForWomanWithEmptyVatId_AssignsVatIdWithEvenCounter()
@@ -124,7 +124,7 @@
         //    citizen.VatId = "0123456789";
         //    ICitizen foundCitizen = registry[id];
 
-        //    Assert.AreNotEqual(citizen.VatId, foundCitizen.VatId);
+        //    Assert.AreNotEqual(citizen.VatId, foundCitizen.VatId); // Some bug
         //}
 
         //[TestMethod]
