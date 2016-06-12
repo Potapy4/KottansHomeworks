@@ -9,6 +9,7 @@ namespace Citizens
 {
     public class CitizenRegistry : ICitizenRegistry
     {
+
         private static Citizen[] citizens = new Citizen[20];
         private static DateTime mainDate = new DateTime(1899, 12, 31);
         private static DateTime lastDate = new DateTime();
