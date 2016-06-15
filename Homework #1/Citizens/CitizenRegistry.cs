@@ -9,12 +9,20 @@ namespace Citizens
 {
     public class CitizenRegistry : ICitizenRegistry
     {
+        private ICitizen[] citizens;
+        private DateTime mainDate;
+        private DateTime lastDate;
+        private int[] controlDigits;
+        private int countNow;
 
-        private static Citizen[] citizens = new Citizen[20];
-        private static DateTime mainDate = new DateTime(1899, 12, 31);
-        private static DateTime lastDate = new DateTime();
-        private static int[] controlDigits = { -1, 5, 7, 9, 4, 6, 10, 5, 7 };
-        private static int countNow = 0;
+        public CitizenRegistry()
+        {
+            citizens = new Citizen[20];
+            mainDate = new DateTime(1899, 12, 31);
+            lastDate = new DateTime();
+            controlDigits = new int[] { -1, 5, 7, 9, 4, 6, 10, 5, 7 };
+            countNow = 0;
+        }
 
         public ICitizen this[string id]
         {
@@ -46,10 +54,12 @@ namespace Citizens
         {
             bool result = false;
 
-            foreach (Citizen ct in citizens)
+            foreach (ICitizen ct in citizens)
             {
                 if (ct == null)
+                {
                     break;
+                }
                 if (ct.VatId == vatID)
                 {
                     result = true;
@@ -59,7 +69,7 @@ namespace Citizens
             return result;
         }
 
-        private string registerVatID(ref ICitizen citizen)
+        private string registerVatID(ICitizen citizen)
         {
             TimeSpan time = citizen.BirthDate - mainDate;
             string vatId = String.Empty;
@@ -73,7 +83,9 @@ namespace Citizens
             foreach (Citizen ct in citizens)
             {
                 if (ct == null)
+                {
                     break;
+                }
                 if (ct.VatId.StartsWith(vatId))
                 {
                     tmpDigit = Convert.ToInt32(ct.VatId.Substring(6, 3));
@@ -83,7 +95,7 @@ namespace Citizens
             vatId += (++tmpDigit).ToString("000") + (int)citizen.Gender;
             tmpDigit = 0;
 
-            for (int i = 0; i < 9; ++i)
+            for (int i = 0; i < controlDigits.Length; ++i)
             {
                 tmpDigit += (vatId[i] - '0') * controlDigits[i];
             }
@@ -103,10 +115,10 @@ namespace Citizens
 
             if (string.IsNullOrEmpty(citizen.VatId))
             {
-                citizen.VatId = registerVatID(ref citizen);
+                citizen.VatId = registerVatID(citizen);
             }
 
-            citizens[countNow++] = citizen as Citizen;
+            citizens[countNow++] = citizen;
             lastDate = SystemDateTime.Now();
         }
 
@@ -118,9 +130,11 @@ namespace Citizens
             foreach (Citizen ct in citizens)
             {
                 if (ct == null)
+                {
                     break;
+                }
 
-                if ((int)ct.Gender == 0)
+                if (ct.Gender == Gender.Female)
                 {
                     ++women;
                 }

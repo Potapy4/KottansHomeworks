@@ -12,14 +12,14 @@ namespace Citizens
 
         public Citizen(string firstName, string lastName, DateTime dateOfBirth, Gender gender)
         {
-            if (!isValidGender(ref gender))
+            if (!isValidGender(gender))
             {
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException("Invalid gender");
             }
 
-            if (!isValidDateOfBirth(ref dateOfBirth))
+            if (!isValidDateOfBirth(dateOfBirth))
             {
-                throw new ArgumentException();
+                throw new ArgumentException("Invalid Date Of Birth");
             }
 
             this.firstName = firstName.Transform(To.LowerCase, To.TitleCase);
@@ -36,22 +36,14 @@ namespace Citizens
             gender = default(Gender);
         }
 
-        private bool isValidGender(ref Gender gender)
+        private bool isValidGender(Gender gender)
         {
-            if (!Enum.IsDefined(typeof(Gender), gender))
-            {
-                return false;
-            }
-            return true;
+            return Enum.IsDefined(typeof(Gender), gender);
         }
-        private bool isValidDateOfBirth(ref DateTime dateOfBirth)
+        private bool isValidDateOfBirth(DateTime dateOfBirth)
         {
             DateTime dtNow = SystemDateTime.Now(); // Not compare without this
-            if (dateOfBirth.CompareTo(dtNow) > 0)
-            {
-                return false;
-            }
-            return true;
+            return (dateOfBirth.CompareTo(dtNow) > 0);
         }        
 
         #region Properties
